@@ -4,8 +4,8 @@ from sys import path
 
 import tensorflow as tf
 
-path.append('../common')
-import download
+path.append('..')
+from common import download
 
 SOURCE_URL = 'http://yann.lecun.com/exdb/mnist/'
 WORK_DIRECTORY = '../data/mnist'
