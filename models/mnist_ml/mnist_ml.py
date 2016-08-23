@@ -40,7 +40,7 @@ def main():
 	sess.run(init)
 
 	#实例化MnistDataSet类，在common/extract_mnist.py中声明，用来得到mnist的数据，imageType为区别图片维度（28*28还是784）
-	mnist_data_set = extract_mnist.MnistDataSet('../../data/mnist/',imageType = '784')
+	mnist_data_set = extract_mnist.MnistDataSet('../../data/mnist/')
 
 	test_images,test_labels = mnist_data_set.test_data()
 

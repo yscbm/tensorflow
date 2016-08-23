@@ -80,10 +80,8 @@ def dense_to_one_hot(labels_dense, num_classes):
 
 class MnistDataSet(object):
 	"""docstring for MnistDataSet"""
-	def __init__(self,data_dir,imageType = '784'):
+	def __init__(self,data_dir):
 		super(MnistDataSet, self).__init__()
-		#mnist数据集分用于卷积神经网络和BP神经网络
-		self.imageType = imageType
 		#提取数据
 		self.train_images =  extract_images(data_dir+TRAIN_IMAGES,TRAIN_NUM)
 		self.train_labels = extract_labels(data_dir+TRAIN_LABELS,TRAIN_NUM)
@@ -97,12 +95,8 @@ class MnistDataSet(object):
 		self.index_in_epoch = TRAIN_NUM
 
 		#根据imageType划分数据
-		if imageType == '784':
-			self.train_images = self.train_images.reshape(TRAIN_NUM, IMAGE_SIZE*IMAGE_SIZE)
-			self.test_images = self.test_images.reshape(TEST_NUM, IMAGE_SIZE*IMAGE_SIZE)
-		else:
-			self.train_images = self.train_images.reshape(TRAIN_NUM, IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS)
-			self.test_images = self.test_images.reshape(TEST_NUM, IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS)
+		self.train_images = self.train_images.reshape(TRAIN_NUM, IMAGE_SIZE*IMAGE_SIZE)
+		self.test_images = self.test_images.reshape(TEST_NUM, IMAGE_SIZE*IMAGE_SIZE)
 
 
 		self.train_labels = dense_to_one_hot(self.train_labels,NUM_CLASSES)
@@ -134,4 +128,3 @@ class MnistDataSet(object):
 
 	def test_data(self):
 		return self.test_images,self.test_labels
-#def next_batch_784()
