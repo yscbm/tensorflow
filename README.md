@@ -16,3 +16,6 @@ mnist ml版本：
 mnist LeNet版本：
 正确率99.28%左右
 cnn模型，和论文的LeNet卷积核数量什么有细微差别
+
+cifar-10 两层卷积层版本，类似LeNet:
+正确率54.1%

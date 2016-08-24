@@ -18,6 +18,8 @@ def main():
 	#偏置量
 	b = tf.Variable(tf.zeros([10]))
 
+	saver = tf.train.Saver()
+
 	#图片[784]*权值[784,10]+偏置[10],获得该图片在每个类（0~9）的价值，用softmax，选择最大值的类
 	y = tf.nn.softmax(tf.matmul(x,W) + b)
 
@@ -33,14 +35,17 @@ def main():
 	#初始化所有变量
 	init = tf.initialize_all_variables()
 
+	
+
+
 	#开始进行计算
-	sess = tf.Session()
+	sess = tf.InteractiveSession()
 
 	#调用初始化
 	sess.run(init)
 
 	#实例化MnistDataSet类，在common/extract_mnist.py中声明，用来得到mnist的数据，imageType为区别图片维度（28*28还是784）
-	mnist_data_set = extract_mnist.MnistDataSet('../../data/mnist/')
+	mnist_data_set = extract_mnist.MnistDataSet('../../data/')
 
 	test_images,test_labels = mnist_data_set.test_data()
 
@@ -56,7 +61,9 @@ def main():
 			correct_prediction = tf.equal(tf.argmax(y,1), tf.argmax(y_,1))
 			accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
 			print sess.run(accuracy, feed_dict={x: test_images, y_: test_labels})
-	
+
+	save_path = saver.save(sess, "model_data/model.ckpt")
+	print "Model saved in file: ", save_path
 	#测试准确程度
 	#对比预测值与真实值是否一致
 	correct_prediction = tf.equal(tf.argmax(y,1), tf.argmax(y_,1))
@@ -66,6 +73,9 @@ def main():
 	
 	#运行并输出结果
 	print sess.run(accuracy, feed_dict={x: test_images, y_: test_labels})
+
+	#关闭会话
+	sess.close()
 
 if __name__ == '__main__':
 	main()

@@ -2,6 +2,7 @@
 
 from sys import path
 
+
 import tensorflow as tf
 
 path.append('../..')
@@ -84,11 +85,14 @@ def main():
 	correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y_,1))
 	accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
 	
+	#保存参数
+	saver = tf.train.Saver()
+
 	#所有变量进行初始化
 	sess.run(tf.initialize_all_variables())
 
 	#获取mnist数据
-	mnist_data_set = extract_mnist.MnistDataSet('../../data/mnist/')
+	mnist_data_set = extract_mnist.MnistDataSet('../../data/')
 	test_images,test_labels = mnist_data_set.test_data()
 
 	#进行训练
@@ -104,6 +108,10 @@ def main():
 		#训练数据
 		train_step.run(feed_dict={x: batch_xs, y_: batch_ys, keep_prob: 0.5})
 	
+	#保存参数
+	save_path = saver.save(sess, "model_data/model.ckpt")
+	print "Model saved in file: ", save_path
+
 	#输出整体测试数据的情况
 	print "test accuracy %g"%accuracy.eval(feed_dict={x: test_images, y_: test_labels, keep_prob: 1.0})
 
