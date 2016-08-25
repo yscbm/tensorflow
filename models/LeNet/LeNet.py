@@ -109,6 +109,8 @@ def main():
 		train_step.run(feed_dict={x: batch_xs, y_: batch_ys, keep_prob: 0.5})
 	
 	#保存参数
+	if not tf.gfile.Exists('model_data'):
+		tf.gfile.MakeDirs('model_data')
 	save_path = saver.save(sess, "model_data/model.ckpt")
 	print "Model saved in file: ", save_path
 

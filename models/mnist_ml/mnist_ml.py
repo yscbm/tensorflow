@@ -62,6 +62,9 @@ def main():
 			accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
 			print sess.run(accuracy, feed_dict={x: test_images, y_: test_labels})
 
+	#保存模型参数
+	if not tf.gfile.Exists('model_data'):
+		tf.gfile.MakeDirs('model_data')
 	save_path = saver.save(sess, "model_data/model.ckpt")
 	print "Model saved in file: ", save_path
 	#测试准确程度
