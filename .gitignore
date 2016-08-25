@@ -1,5 +1,4 @@
 data/*
 *.pyc
 /test/*
-model_data/*
-/model_data/*
+modelData/*
