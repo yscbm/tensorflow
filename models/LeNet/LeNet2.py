@@ -73,7 +73,7 @@ def main():
 	#输出层，使用softmax进行多分类
 	W_fc2 = weight_variable([1024,10])
 	b_fc2 = bias_variable([10])
-	y_conv=tf.maximum(tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2),1e-30)
+	y_conv=tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
 
 
 	#代价函数
@@ -97,15 +97,14 @@ def main():
 
 	#进行训练
 	start_time = time.time()
-	for i in xrange(20000):
+	for i in xrange(2000):
 		#获取训练数据
-		batch_xs, batch_ys = mnist_data_set.next_train_batch(50)
+		batch_xs, batch_ys = mnist_data_set.next_train_batch(5)
 
 		#每迭代100个 batch，对当前训练数据进行测试，输出当前预测准确率
-		if i%100 == 0:
+		if (i+1)%100 == 0:
 			train_accuracy = accuracy.eval(feed_dict={x:batch_xs, y_: batch_ys, keep_prob: 1.0})
 			print "step %d, training accuracy %g"%(i, train_accuracy)
-			#计算间隔时间
 			end_time = time.time()
 			print 'time: ',(end_time - start_time)
 			start_time = end_time
@@ -113,17 +112,14 @@ def main():
 		train_step.run(feed_dict={x: batch_xs, y_: batch_ys, keep_prob: 0.5})
 	
 	#保存参数
+	'''
 	if not tf.gfile.Exists('model_data'):
 		tf.gfile.MakeDirs('model_data')
 	save_path = saver.save(sess, "model_data/model.ckpt")
 	print "Model saved in file: ", save_path
-
+	'''
 	#输出整体测试数据的情况
-	avg = 0
-	for i in xrange(200):
-		avg+=accuracy.eval(feed_dict={x: test_images[i*50:i*50+50], y_: test_labels[i*50:i*50+50], keep_prob: 1.0})
-	avg/=200
-	print "test accuracy %g"%avg
+	print "test accuracy %g"%accuracy.eval(feed_dict={x: test_images[0:1000], y_: test_labels[0:1000], keep_prob: 1.0})
 
 	#关闭会话
 	sess.close()

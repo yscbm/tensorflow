@@ -3,6 +3,7 @@
 from sys import path
 
 import tensorflow as tf
+import time
 
 path.append('../..')
 from common import extract_cifar10
@@ -80,7 +81,10 @@ def main():
 	#输出层，使用softmax进行多分类
 	W_fc2 = weight_variable([192,10])
 	b_fc2 = bias_variable([10])
-	y_conv=tf.nn.softmax(tf.matmul(fc1_drop, W_fc2) + b_fc2)
+	y_conv=tf.maximum(tf.nn.softmax(tf.matmul(fc1_drop, W_fc2) + b_fc2),1e-30)
+
+	#补丁，防止y等于0，造成log(y)计算出-inf
+	#y1 = tf.maximum(y_conv,1e-30)
 
 	#代价函数
 	cross_entropy = -tf.reduce_sum(y_*tf.log(y_conv))
@@ -102,21 +106,31 @@ def main():
 	test_images,test_labels = cifar10_data_set.test_data()
 
 	#进行训练
-	for i in xrange(10000):
+	start_time = time.time()
+	for i in xrange(20000):
 		#获取训练数据
 		#print i,'1'
-		batch_xs, batch_ys = cifar10_data_set.next_train_batch(100)
+		batch_xs, batch_ys = cifar10_data_set.next_train_batch(50)
 		#print i,'2'
 
 		#每迭代100个 batch，对当前训练数据进行测试，输出当前预测准确率
-		if i%100 == 0:
+		if i%1000 == 0:
 			#print "test accuracy %g"%accuracy.eval(feed_dict={x: test_images, y_: test_labels, keep_prob: 1.0})
 			train_accuracy = accuracy.eval(feed_dict={x:batch_xs, y_: batch_ys, keep_prob: 1.0})
 			print "step %d, training accuracy %g"%(i, train_accuracy)
-		
+			#计算间隔时间
+			end_time = time.time()
+			print 'time: ',(end_time - start_time)
+			start_time = end_time
+
+
 		if (i+1)%10000 == 0:
 			#输出整体测试数据的情况
-			print "test accuracy %g"%accuracy.eval(feed_dict={x: test_images, y_: test_labels, keep_prob: 1.0})
+			avg = 0
+			for j in xrange(20):
+				avg+=accuracy.eval(feed_dict={x: test_images[j*50:j*50+50], y_: test_labels[j*50:j*50+50], keep_prob: 1.0})
+			avg/=20
+			print "test accuracy %g"%avg
 			#保存模型参数
 			if not tf.gfile.Exists('model_data'):
 				tf.gfile.MakeDirs('model_data')
@@ -128,7 +142,12 @@ def main():
 		train_step.run(feed_dict={x: batch_xs, y_: batch_ys, keep_prob: 0.5})
 
 	#输出整体测试数据的情况
-	print "test accuracy %g"%accuracy.eval(feed_dict={x: test_images, y_: test_labels, keep_prob: 1.0})
+	avg = 0
+	for i in xrange(200):
+		avg+=accuracy.eval(feed_dict={x: test_images[i*50:i*50+50], y_: test_labels[i*50:i*50+50], keep_prob: 1.0})
+	avg/=200
+	print "test accuracy %g"%avg
+
 
 	#关闭会话
 	sess.close()

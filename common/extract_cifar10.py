@@ -14,7 +14,7 @@ PIXEL_DEPTH = 255
 NUM_CLASSES = 10
 
 TRAIN_NUM = 10000
-TRAIN_NUMS = 10000
+TRAIN_NUMS = 50000
 TEST_NUM = 10000
 
 def extract_data(filenames):
@@ -54,7 +54,7 @@ def extract_data(filenames):
 
 def extract_train_data(files_dir):
 	#获得训练数据
-	filenames = [os.path.join(files_dir, 'data_batch_%d.bin' % i) for i in xrange(1, 2)]
+	filenames = [os.path.join(files_dir, 'data_batch_%d.bin' % i) for i in xrange(1, 6)]
 	return extract_data(filenames)
 	
 def extract_test_data(files_dir):
@@ -82,6 +82,8 @@ class Cifar10DataSet(object):
 		self.train_labels,self.train_images = extract_train_data(os.path.join(data_dir,'cifar10/cifar-10-batches-bin'))
 		self.test_labels,self.test_images = extract_test_data(os.path.join(data_dir,'cifar10/cifar-10-batches-bin'))
 		
+		print self.train_labels.size
+
 		self.train_labels = dense_to_one_hot(self.train_labels,NUM_CLASSES)
 		self.test_labels = dense_to_one_hot(self.test_labels,NUM_CLASSES)
 
@@ -117,7 +119,7 @@ class Cifar10DataSet(object):
 		return self.train_images[start:end], self.train_labels[start:end]
 
 	def test_data(self):
-		return self.test_images[0:1000],self.test_labels[0:1000]
+		return self.test_images,self.test_labels
 
 
 def main():
