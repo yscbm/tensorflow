@@ -1,4 +1,6 @@
-data/*
-*.pyc
-/test/*
-model_data/
+data/* 
+*.pyc 
+/test/* 
+model_data/ 
+pro/* 
+pro_old/* 
